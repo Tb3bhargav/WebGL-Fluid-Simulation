@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WebGL Fluid Simulation - Launcher</title>
+<HTA:APPLICATION
+  ID="FluidSimLauncher"
+  APPLICATIONNAME="WebGL Fluid Simulation Launcher"
+  SINGLEINSTANCE="yes"
+  WINDOWSTATE="normal"
+  SCROLL="no"
+  CONTEXTMENU="no"
+/>
+<style>
+body{font-family:"Segoe UI",Arial,sans-serif;background:#000;color:#d6e2ff;margin:0;padding:24px;}
+.card{background:#0b1224;border:1px solid #2dd4bf;border-radius:12px;padding:20px;max-width:560px;margin:0 auto;}
+h1{margin:0 0 6px;font-size:20px;color:#fff;}
+.sub{color:#8ea1d8;font-size:12px;margin-bottom:16px;}
+button{display:block;width:100%;margin:8px 0;padding:12px;font-size:14px;font-weight:700;border-radius:8px;border:1px solid #2dd4bf;cursor:pointer;}
+.primary{background:#2dd4bf;color:#06231f;}
+.ghost{background:transparent;color:#d6e2ff;}
+.hint{font-size:12px;color:#8ea1d8;margin-top:12px;line-height:1.5;}
+code{background:#080e1f;padding:2px 6px;border-radius:4px;color:#98f3cc;}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>WebGL Fluid Simulation</h1>
+<div class="sub">Easy starter - needs internet for Google Analytics only; simulation runs offline.</div>
+<button class="primary" onclick="VBScript:OpenMain">1 - Open Fluid Simulation</button>
+<button class="ghost" onclick="VBScript:StartServer">2 - Start Local Server (fixes file:// WebGL)</button>
+<button class="ghost" onclick="VBScript:OpenFolder">3 - Open Project Folder</button>
+<div class="hint">If drag/screenshot fails via double-click, use Step 2 then open <code>http://127.0.0.1:8080/index.html</code>.<br>Requires WebGL2 browser (Chrome/Edge).</div>
+</div>
+<script language="VBScript">
+Dim sh, fso
+Set sh = CreateObject("WScript.Shell")
+Set fso = CreateObject("Scripting.FileSystemObject")
+Function GetBase()
+  Dim p
+  p = Unescape(document.location.pathname)
+  If Left(p, 1) = "/" Then p = Mid(p, 2)
+  p = Replace(p, "/", "\")
+  GetBase = fso.GetParentFolderName(p)
+End Function
+Sub OpenMain()
+  Dim target
+  target = fso.BuildPath(GetBase(), "index.html")
+  sh.Run Chr(34) & target & Chr(34), 1, False
+End Sub
+Sub StartServer()
+  Dim base
+  base = GetBase()
+  sh.Run "cmd /k cd /d " & Chr(34) & base & Chr(34) & " && python -m http.server 8080", 1, False
+End Sub
+Sub OpenFolder()
+  sh.Run Chr(34) & GetBase() & Chr(34), 1, False
+End Sub
+</script>
+</body>
+</html>
